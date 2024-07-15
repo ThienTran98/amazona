@@ -1,38 +1,47 @@
-import AddToCart from '@/components/products/AddToCart'
-import { convertDocToObj } from '@/lib/utils'
-import productService from '@/lib/services/productService'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Rating } from '@/components/products/Rating'
+import AddToCart from "@/components/products/AddToCart";
+// import { convertDocToObj } from "@/lib/utils";
+import productService from "@/lib/services/productService";
+import Image from "next/image";
+import Link from "next/link";
+import { Rating } from "@/components/products/Rating";
+import data from "@/lib/data";
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
+  params: { slug: string };
 }) {
-  const product = await productService.getBySlug(params.slug)
+  const product = await productService.getBySlug(params.slug);
   if (!product) {
-    return { title: 'Product not found' }
+    return { title: "Product not found" };
   }
   return {
     title: product.name,
     description: product.description,
-  }
+  };
 }
 
 export default async function ProductDetails({
   params,
 }: {
-  params: { slug: string }
+  params: { slug: string };
 }) {
-  const product = await productService.getBySlug(params.slug)
+  // const product = await productService.getBySlug(params.slug)
+
+  const product = data.products.find((x) => x.slug === params.slug);
+
   if (!product) {
-    return <div>Product not found</div>
+    return <div>Product not found</div>;
   }
   return (
     <>
-      <div className="my-2">
-        <Link href="/">back to products</Link>
+      <div className="my-2 ">
+        <Link
+          className="px-3 py-2 rounded border text-teal-500 border-teal-500 hover:opacity-70 hover:transition-all hover:text-teal-700"
+          href="/"
+        >
+          Back to products
+        </Link>
       </div>
       <div className="grid md:grid-cols-4 md:gap-3">
         <div className="md:col-span-2">
@@ -43,8 +52,8 @@ export default async function ProductDetails({
             height={640}
             sizes="100vw"
             style={{
-              width: '100%',
-              height: 'auto',
+              width: "100%",
+              height: "auto",
             }}
           ></Image>
         </div>
@@ -78,17 +87,18 @@ export default async function ProductDetails({
               <div className="mb-2 flex justify-between">
                 <div>Status</div>
                 <div>
-                  {product.countInStock > 0 ? 'In stock' : 'Unavailable'}
+                  {product.countInStock > 0 ? "In stock" : "Unavailable"}
                 </div>
               </div>
               {product.countInStock !== 0 && (
                 <div className="card-actions justify-center">
                   <AddToCart
                     item={{
-                      ...convertDocToObj(product),
+                      // ...convertDocToObj(product),
+                      ...product,
                       qty: 0,
-                      color: '',
-                      size: '',
+                      color: "",
+                      size: "",
                     }}
                   />
                 </div>
@@ -98,5 +108,5 @@ export default async function ProductDetails({
         </div>
       </div>
     </>
-  )
+  );
 }
